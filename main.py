@@ -38,6 +38,8 @@ def get_lesson_response(devman_token, telegram_token, chat_id):
                 bot.send_message(chat_id=chat_id, text=get_text_for_message(lesson_title, lesson_url, is_negative))
             elif answer['status'] == 'timeout':
                 timestamp = new_attempt["timestamp_to_request"]
+        except requests.exceptions.ReadTimeout:
+            pass
         except requests.exceptions.ConnectionError:
             print(requests.exceptions.ConnectionError)
             timeout = 300
