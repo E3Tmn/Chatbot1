@@ -3,6 +3,16 @@ from dotenv import load_dotenv
 import os
 from telegram_bot import send_message
 import argparse
+import telegram
+
+
+def get_text_for_message(lesson_title, lesson_url, is_negative):
+    transfer_symbol = '\n'
+    verdict = 'К сожалению, в работе нашлись ошибки' if is_negative else 'Все верно! Преподаватель в восторге.'
+    text_for_message = f"У Вас проверили работу '{lesson_title}'.\
+        {transfer_symbol}{verdict}\
+        {transfer_symbol}Ссылка на урок: {lesson_url}"
+    return text_for_message
 
 
 def get_lesson_response(DEVMAN_TOKEN, TELEGRAM_TOKEN, chat_id):
@@ -22,7 +32,8 @@ def get_lesson_response(DEVMAN_TOKEN, TELEGRAM_TOKEN, chat_id):
             lesson_title = new_attempts['lesson_title']
             lesson_url = new_attempts['lesson_url']
             is_negative = new_attempts['is_negative']
-            send_message(lesson_title, lesson_url, is_negative, TELEGRAM_TOKEN, chat_id)
+            bot = telegram.Bot(TELEGRAM_TOKEN)
+            bot.send_message(chat_id=chat_id, text=get_text_for_message(lesson_title, lesson_url, is_negative))
         except requests.exceptions.ReadTimeout:
             print(requests.exceptions.ReadTimeout)
         except requests.exceptions.ConnectionError:
