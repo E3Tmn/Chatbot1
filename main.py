@@ -27,15 +27,16 @@ def get_lesson_response(DEVMAN_TOKEN, TELEGRAM_TOKEN, chat_id):
         try:
             response = requests.get('https://dvmn.org/api/long_polling/', params=payloads, headers=headers, timeout=90)
             response.raise_for_status()
-            new_attempts = response.json()['new_attempts'][-1]
-            timestamp = new_attempts["timestamp"]
-            lesson_title = new_attempts['lesson_title']
-            lesson_url = new_attempts['lesson_url']
-            is_negative = new_attempts['is_negative']
-            bot = telegram.Bot(TELEGRAM_TOKEN)
-            bot.send_message(chat_id=chat_id, text=get_text_for_message(lesson_title, lesson_url, is_negative))
-        except requests.exceptions.ReadTimeout:
-            print(requests.exceptions.ReadTimeout)
+            if response.json()['status'] == 'found':
+                new_attempt = response.json()['new_attempts'][-1]
+                timestamp = new_attempt["timestamp"]
+                lesson_title = new_attempt['lesson_title']
+                lesson_url = new_attempt['lesson_url']
+                is_negative = new_attempt['is_negative']
+                bot = telegram.Bot(TELEGRAM_TOKEN)
+                bot.send_message(chat_id=chat_id, text=get_text_for_message(lesson_title, lesson_url, is_negative))
+        # except requests.exceptions.ReadTimeout:
+            # raise requests.exceptions.ReadTimeout
         except requests.exceptions.ConnectionError:
             print(requests.exceptions.ConnectionError)
 
