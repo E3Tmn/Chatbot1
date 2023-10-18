@@ -35,8 +35,6 @@ def get_lesson_response(DEVMAN_TOKEN, TELEGRAM_TOKEN, chat_id):
                 is_negative = new_attempt['is_negative']
                 bot = telegram.Bot(TELEGRAM_TOKEN)
                 bot.send_message(chat_id=chat_id, text=get_text_for_message(lesson_title, lesson_url, is_negative))
-        # except requests.exceptions.ReadTimeout:
-            # raise requests.exceptions.ReadTimeout
         except requests.exceptions.ConnectionError:
             print(requests.exceptions.ConnectionError)
 
