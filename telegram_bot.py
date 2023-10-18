@@ -1,9 +1,15 @@
 import telegram
-from dotenv import load_dotenv
-import os
 
-def send_message():
-    load_dotenv()
-    bot = telegram.Bot(token=os.environ['TELEGRAM_TOKEN'])
-    print(bot.get_me())
-    bot.send_message(chat_id=5747322509, text="Преподаватель проверил работу")
+
+def get_text_for_message(lesson_title, lesson_url, is_negative):
+    transfer_symbol = '\n'
+    verdict = 'К сожалению, в работе нашлись ошибки' if is_negative else 'Все верно! Преподаватель в восторге.'
+    text_for_message = f"У Вас проверили работу '{lesson_title}'.\
+        {transfer_symbol}{verdict}\
+        {transfer_symbol}Ссылка на урок: {lesson_url}"
+    return text_for_message
+
+
+def send_message(lesson_title, lesson_url, is_negative, TELEGRAM_TOKEN):
+    bot = telegram.Bot(TELEGRAM_TOKEN)
+    bot.send_message(chat_id=5747322509, text=get_text_for_message(lesson_title, lesson_url, is_negative))
