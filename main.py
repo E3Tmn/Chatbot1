@@ -4,7 +4,7 @@ import os
 from telegram_bot import send_message
 import argparse
 import telegram
-
+import time
 
 def get_text_for_message(lesson_title, lesson_url, is_negative):
     transfer_symbol = '\n'
@@ -15,11 +15,11 @@ def get_text_for_message(lesson_title, lesson_url, is_negative):
     return text_for_message
 
 
-def get_lesson_response(DEVMAN_TOKEN, TELEGRAM_TOKEN, chat_id):
+def get_lesson_response(devman_token, telegram_token, chat_id):
     timestamp = ""
     while True:
         headers = {
-            "Authorization": DEVMAN_TOKEN
+            "Authorization": devman_token
         }
         payloads = {
             "timestamp": timestamp
@@ -33,10 +33,12 @@ def get_lesson_response(DEVMAN_TOKEN, TELEGRAM_TOKEN, chat_id):
                 lesson_title = new_attempt['lesson_title']
                 lesson_url = new_attempt['lesson_url']
                 is_negative = new_attempt['is_negative']
-                bot = telegram.Bot(TELEGRAM_TOKEN)
+                bot = telegram.Bot(telegram_token)
                 bot.send_message(chat_id=chat_id, text=get_text_for_message(lesson_title, lesson_url, is_negative))
         except requests.exceptions.ConnectionError:
             print(requests.exceptions.ConnectionError)
+            timeout = 300
+            time.sleep(timeout)
 
 
 def main():
@@ -44,9 +46,9 @@ def main():
     parser = argparse.ArgumentParser(description="Отслеживайте статус урока благодаря боту")
     parser.add_argument('chat_id', help='ID Вашего бота в Телеграм')
     args = parser.parse_args()
-    DEVMAN_TOKEN = os.environ['DEVMAN_TOKEN']
-    TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
-    get_lesson_response(DEVMAN_TOKEN, TELEGRAM_TOKEN, args.chat_id)
+    devman_token = os.environ['DEVMAN_TOKEN']
+    telegram_token = os.environ['TELEGRAM_TOKEN']
+    get_lesson_response(devman_token, telegram_token, args.chat_id)
 
 
 if __name__ == "__main__":
