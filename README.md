@@ -13,20 +13,14 @@ pip install -r requirements.txt
 ```bash
 DEVMAN_TOKEN=Уникальный токен для доступа к API сайта Devman
 TELEGRAM_TOKEN=Уникальный телеграм токен бота
+TG_CHAT_ID=Ваш телеграм id
 ```
 ## Запуск
 
 Запуск на Linux(Python 3) или Windows:
 ```bash
 
-$ python main.py [chat_id]
-
-```
-При запуске программы необходимо обязательно передавать ссылку в качестве параметра.
-Например:
-```bash
-
-$ python main.py 123456789
+$ python main.py
 
 ```
 ## Работа
