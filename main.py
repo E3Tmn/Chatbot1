@@ -49,7 +49,6 @@ def get_lesson_response(devman_token, telegram_token, chat_id):
 def main():
     load_dotenv()
     parser = argparse.ArgumentParser(description="Отслеживайте статус урока благодаря боту")
-    parser.add_argument('chat_id', help='ID Вашего бота в Телеграм')
     args = parser.parse_args()
     chat_id = os.environ['TG_CHAT_ID']
     devman_token = os.environ['DEVMAN_TOKEN']
