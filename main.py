@@ -4,6 +4,19 @@ import os
 import argparse
 import telegram
 import time
+import logging
+
+
+class myHandler(logging.Handler):
+
+    def __init__(self, bot, chat_id):
+        super().__init__()
+        self.chat_id = chat_id
+        self.bot = bot
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.bot.send_message(chat_id=self.chat_id, text=log_entry)
 
 
 def get_text_for_message(lesson_title, lesson_url, is_negative):
@@ -15,7 +28,7 @@ def get_text_for_message(lesson_title, lesson_url, is_negative):
     return text_for_message
 
 
-def get_lesson_response(devman_token, telegram_token, chat_id):
+def get_lesson_response(devman_token, bot, chat_id):
     timestamp = ""
     while True:
         headers = {
@@ -34,7 +47,6 @@ def get_lesson_response(devman_token, telegram_token, chat_id):
                 lesson_title = new_attempt['lesson_title']
                 lesson_url = new_attempt['lesson_url']
                 is_negative = new_attempt['is_negative']
-                bot = telegram.Bot(telegram_token)
                 bot.send_message(chat_id=chat_id, text=get_text_for_message(lesson_title, lesson_url, is_negative))
             elif answer['status'] == 'timeout':
                 timestamp = new_attempt["timestamp_to_request"]
@@ -53,7 +65,12 @@ def main():
     chat_id = os.environ['TG_CHAT_ID']
     devman_token = os.environ['DEVMAN_TOKEN']
     telegram_token = os.environ['TELEGRAM_TOKEN']
-    get_lesson_response(devman_token, telegram_token, chat_id)
+    bot = telegram.Bot(telegram_token)
+    logger = logging.getLogger("Work with bot")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(myHandler(bot, chat_id))
+    logger.warning('Бот заработал')
+    get_lesson_response(devman_token, bot, chat_id)
 
 
 if __name__ == "__main__":
