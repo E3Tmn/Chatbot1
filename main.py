@@ -70,7 +70,10 @@ def main():
     logger.setLevel(logging.INFO)
     logger.addHandler(myHandler(bot, chat_id))
     logger.warning('Бот заработал')
-    get_lesson_response(devman_token, bot, chat_id)
+    try:
+        get_lesson_response(devman_token, bot, chat_id)
+    except Exception as err:
+        logger.warning(err)
 
 
 if __name__ == "__main__":
