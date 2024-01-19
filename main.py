@@ -7,7 +7,10 @@ import time
 import logging
 
 
-class myHandler(logging.Handler):
+logger = logging.getLogger("Work with bot")
+
+
+class LogsHandler(logging.Handler):
 
     def __init__(self, bot, chat_id):
         super().__init__()
@@ -53,7 +56,6 @@ def get_lesson_response(devman_token, bot, chat_id):
         except requests.exceptions.ReadTimeout:
             pass
         except requests.exceptions.ConnectionError:
-            print(requests.exceptions.ConnectionError)
             timeout = 300
             time.sleep(timeout)
 
@@ -66,9 +68,8 @@ def main():
     devman_token = os.environ['DEVMAN_TOKEN']
     telegram_token = os.environ['TELEGRAM_TOKEN']
     bot = telegram.Bot(telegram_token)
-    logger = logging.getLogger("Work with bot")
     logger.setLevel(logging.INFO)
-    logger.addHandler(myHandler(bot, chat_id))
+    logger.addHandler(LogsHandler(bot, chat_id))
     logger.warning('Бот заработал')
     try:
         get_lesson_response(devman_token, bot, chat_id)
